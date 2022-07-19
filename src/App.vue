@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useWeatherApi } from './composables/weather-api'
 import dayjs from 'dayjs'
 
@@ -12,6 +12,12 @@ interface WeatherApiResponse {
 
 const query = ref<string>('')
 const weather = ref<WeatherApiResponse | null>(null)
+const haveQuery = computed(() => {
+  return query.value.length > 0
+})
+const haveNoQuery = computed(() => {
+  return haveQuery.value === false
+})
 
 async function getWeather() {
   const { getWeatherUsingQuery } = useWeatherApi()
@@ -45,7 +51,9 @@ async function getWeather() {
           />
           <button
             type="submit"
-            class="bg-blue-700 p-4 rounded-md rounded-tl-none rounded-bl-none font-bold text-xl"
+            class="bg-blue-700 p-4 rounded-md rounded-tl-none rounded-bl-none font-bold text-xl disabled:bg-gray-500 disabled:text-gray-400"
+            :disabled="haveNoQuery"
+            :aria-disabled="haveNoQuery"
           >
             GO
           </button>
